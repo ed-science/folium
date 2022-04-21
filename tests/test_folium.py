@@ -237,8 +237,9 @@ class TestFolium(object):
             geo_data = json.load(f)
         with pytest.warns(FutureWarning):
             self.m.choropleth(geo_data)
-        assert any([isinstance(child, Choropleth)
-                    for child in self.m._children.values()])
+        assert any(
+            isinstance(child, Choropleth) for child in self.m._children.values()
+        )
 
     def test_tile_attr_unicode(self):
         """Test tile attribution unicode"""

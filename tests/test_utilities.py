@@ -101,8 +101,11 @@ def test_if_pandas_df_convert_to_numpy():
     res = if_pandas_df_convert_to_numpy(df)
     assert isinstance(res, np.ndarray)
     expected = np.array(data)
-    assert all([[all([i == j]) for i, j in zip(row1, row2)]
-                for row1, row2 in zip(res, expected)])
+    assert all(
+        [all([i == j]) for i, j in zip(row1, row2)]
+        for row1, row2 in zip(res, expected)
+    )
+
     # Also check if it ignores things that are not Pandas DataFrame:
     assert if_pandas_df_convert_to_numpy(data) is data
     assert if_pandas_df_convert_to_numpy(expected) is expected

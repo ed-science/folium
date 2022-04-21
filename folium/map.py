@@ -218,15 +218,18 @@ class Icon(MacroElement):
         super(Icon, self).__init__()
         self._name = 'Icon'
         if color not in self.color_options:
-            warnings.warn('color argument of Icon should be one of: {}.'
-                          .format(self.color_options), stacklevel=2)
+            warnings.warn(
+                f'color argument of Icon should be one of: {self.color_options}.',
+                stacklevel=2,
+            )
+
         self.options = parse_options(
             marker_color=color,
             icon_color=icon_color,
             icon=icon,
             prefix=prefix,
-            extra_classes='fa-rotate-{}'.format(angle),
-            **kwargs
+            extra_classes=f'fa-rotate-{angle}',
+            **kwargs,
         )
 
 
@@ -429,15 +432,15 @@ class Tooltip(MacroElement):
     def parse_options(self, kwargs):
         """Validate the provided kwargs and return options as json string."""
         kwargs = {camelize(key): value for key, value in kwargs.items()}
-        for key in kwargs.keys():
-            assert key in self.valid_options, (
-                'The option {} is not in the available options: {}.'
-                .format(key, ', '.join(self.valid_options))
-            )
-            assert isinstance(kwargs[key], self.valid_options[key]), (
-                'The option {} must be one of the following types: {}.'
-                .format(key, self.valid_options[key])
-            )
+        for key in kwargs:
+            assert (
+                key in self.valid_options
+            ), f"The option {key} is not in the available options: {', '.join(self.valid_options)}."
+
+            assert isinstance(
+                kwargs[key], self.valid_options[key]
+            ), f'The option {key} must be one of the following types: {self.valid_options[key]}.'
+
         return kwargs
 
 

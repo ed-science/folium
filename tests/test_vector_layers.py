@@ -16,7 +16,7 @@ from folium.vector_layers import Circle, CircleMarker, PolyLine, Polygon, Rectan
 def test_circle():
     m = Map()
     radius = 10000
-    popup = 'I am {} meters'.format(radius)
+    popup = f'I am {radius} meters'
     location = [-27.551667, -48.478889]
 
     circle = Circle(
@@ -83,7 +83,7 @@ def test_circle():
 def test_circle_marker():
     m = Map()
     radius = 50
-    popup = 'I am {} pixels'.format(radius)
+    popup = f'I am {radius} pixels'
     location = [-27.55, -48.8]
 
     circle_marker = CircleMarker(

@@ -70,17 +70,17 @@ def path_options(line=False, radius=False, **kwargs):
             'noClip': kwargs.pop('no_clip', False),
         }
     if radius:
-        extra_options.update({'radius': radius})
+        extra_options['radius'] = radius
 
     color = kwargs.pop('color', '#3388ff')
     fill_color = kwargs.pop('fill_color', False)
     if fill_color:
         fill = True
-    elif not fill_color:
+    else:
         fill_color = color
         fill = kwargs.pop('fill', False)
 
-    default = {
+    return {
         'stroke': kwargs.pop('stroke', True),
         'color': color,
         'weight': kwargs.pop('weight', 3),
@@ -94,9 +94,7 @@ def path_options(line=False, radius=False, **kwargs):
         'fillOpacity': kwargs.pop('fill_opacity', 0.2),
         'fillRule': kwargs.pop('fill_rule', 'evenodd'),
         'bubblingMouseEvents': kwargs.pop('bubbling_mouse_events', True),
-    }
-    default.update(extra_options)
-    return default
+    } | extra_options
 
 
 class BaseMultiLocation(MacroElement):

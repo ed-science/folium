@@ -37,8 +37,7 @@ def walk_subpkg(name):
     for parent, dirs, files in os.walk(os.path.join(package_dir, name)):
         # Remove package_dir from the path.
         sub_dir = os.sep.join(parent.split(os.sep)[1:])
-        for f in files:
-            data_files.append(os.path.join(sub_dir, f))
+        data_files.extend(os.path.join(sub_dir, f) for f in files)
     return data_files
 
 
@@ -70,7 +69,7 @@ setup(
     version=versioneer.get_version(),
     description='Make beautiful maps with Leaflet.js & Python',
     license="MIT",
-    long_description='{}'.format(read("README.rst")),
+    long_description=f'{read("README.rst")}',
     long_description_content_type="text/x-rst",
     author='Rob Story',
     author_email='wrobstory@gmail.com',
@@ -83,7 +82,7 @@ setup(
         'Topic :: Scientific/Engineering :: GIS',
         'Topic :: Scientific/Engineering :: Visualization',
         'License :: OSI Approved :: MIT License',
-        'Development Status :: 5 - Production/Stable'
+        'Development Status :: 5 - Production/Stable',
     ],
     platforms="any",
     packages=packages,

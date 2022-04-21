@@ -117,10 +117,7 @@ class TimestampedWmsTileLayers(Layer):
                 'loop': loop,
             },
         )
-        if isinstance(data, WmsTileLayer):
-            self.layers = [data]
-        else:
-            self.layers = data  # Assume iterable
+        self.layers = [data] if isinstance(data, WmsTileLayer) else data
 
     def render(self, **kwargs):
         super(TimestampedWmsTileLayers, self).render()

@@ -114,7 +114,7 @@ class HeatMapWithTime(Layer):
         super(HeatMapWithTime, self).__init__(name=name, overlay=overlay,
                                               control=control, show=show)
         self._name = 'HeatMap'
-        self._control_name = self.get_name() + 'Control'
+        self._control_name = f'{self.get_name()}Control'
 
         # Input data.
         self.data = data

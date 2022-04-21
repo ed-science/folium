@@ -100,10 +100,7 @@ def if_pandas_df_convert_to_numpy(obj):
     Iterating over a DataFrame has weird side effects, such as the first
     row being the column names. Converting to Numpy is more safe.
     """
-    if pd is not None and isinstance(obj, pd.DataFrame):
-        return obj.values
-    else:
-        return obj
+    return obj.values if pd is not None and isinstance(obj, pd.DataFrame) else obj
 
 
 def image_to_url(image, colormap=None, origin='upper'):
@@ -133,11 +130,11 @@ def image_to_url(image, colormap=None, origin='upper'):
         with io.open(image, 'rb') as f:
             img = f.read()
         b64encoded = base64.b64encode(img).decode('utf-8')
-        url = 'data:image/{};base64,{}'.format(fileformat, b64encoded)
+        url = f'data:image/{fileformat};base64,{b64encoded}'
     elif 'ndarray' in image.__class__.__name__:
         img = write_png(image, origin=origin, colormap=colormap)
         b64encoded = base64.b64encode(img).decode('utf-8')
-        url = 'data:image/png;base64,{}'.format(b64encoded)
+        url = f'data:image/png;base64,{b64encoded}'
     else:
         # Round-trip to ensure a nice formatted json.
         url = json.loads(json.dumps(image))
@@ -336,8 +333,7 @@ def iter_coords(obj):
             yield tuple(coords)
             break
         else:
-            for f in iter_coords(coord):
-                yield f
+            yield from iter_coords(coord)
 
 
 def _locations_mirror(x):
@@ -348,13 +344,12 @@ def _locations_mirror(x):
     [[[2, 1], [4, 3]], [6, 5], [8, 7]]
 
     """
-    if hasattr(x, '__iter__'):
-        if hasattr(x[0], '__iter__'):
-            return list(map(_locations_mirror, x))
-        else:
-            return list(x[::-1])
-    else:
+    if not hasattr(x, '__iter__'):
         return x
+    if hasattr(x[0], '__iter__'):
+        return list(map(_locations_mirror, x))
+    else:
+        return list(x[::-1])
 
 
 def get_bounds(locations, lonlat=False):
@@ -416,16 +411,14 @@ def iter_points(x):
     """
     if not isinstance(x, (list, tuple)):
         raise ValueError('List/tuple type expected. Got {!r}.'.format(x))
-    if len(x):
-        if isinstance(x[0], (list, tuple)):
-            out = []
-            for y in x:
-                out += iter_points(y)
-            return out
-        else:
-            return [x]
-    else:
+    if not len(x):
         return []
+    if not isinstance(x[0], (list, tuple)):
+        return [x]
+    out = []
+    for y in x:
+        out += iter_points(y)
+    return out
 
 
 def compare_rendered(obj1, obj2):
@@ -477,8 +470,7 @@ def deep_copy(item_original):
 def get_obj_in_upper_tree(element, cls):
     """Return the first object in the parent tree of class `cls`."""
     if not hasattr(element, '_parent'):
-        raise ValueError('The top of the tree was reached without finding a {}'
-                         .format(cls))
+        raise ValueError(f'The top of the tree was reached without finding a {cls}')
     parent = element._parent
     if not isinstance(parent, cls):
         return get_obj_in_upper_tree(parent, cls)

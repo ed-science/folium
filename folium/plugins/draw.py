@@ -104,7 +104,8 @@ class Draw(MacroElement):
         figure.header.add_child(
             CssLink('https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.css'))  # noqa
 
-        export_style = """
+        if self.export:
+            export_style = """
             <style>
                 #export {
                     position: absolute;
@@ -123,7 +124,6 @@ class Draw(MacroElement):
                 }
             </style>
         """
-        export_button = """<a href='#' id='export'>Export</a>"""
-        if self.export:
             figure.header.add_child(Element(export_style), name='export')
+            export_button = """<a href='#' id='export'>Export</a>"""
             figure.html.add_child(Element(export_button), name='export_button')

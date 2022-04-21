@@ -48,12 +48,12 @@ class DualMap(MacroElement):
     def __init__(self, location=None, layout='horizontal', **kwargs):
         super(DualMap, self).__init__()
         for key in ('width', 'height', 'left', 'top', 'position'):
-            assert key not in kwargs, ('Argument {} cannot be used with '
-                                       'DualMap.'.format(key))
+            assert key not in kwargs, f'Argument {key} cannot be used with DualMap.'
         if layout not in ('horizontal', 'vertical'):
-            raise ValueError('Undefined option for argument `layout`: {}. '
-                             'Use either \'horizontal\' or \'vertical\'.'
-                             .format(layout))
+            raise ValueError(
+                f"Undefined option for argument `layout`: {layout}. Use either 'horizontal' or 'vertical'."
+            )
+
         width = '50%' if layout == 'horizontal' else '100%'
         height = '100%' if layout == 'horizontal' else '50%'
         self.m1 = Map(location=location, width=width, height=height,

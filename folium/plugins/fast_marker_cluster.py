@@ -89,4 +89,4 @@ class FastMarkerCluster(MarkerCluster):
                     return marker;
                 };"""
         else:
-            self.callback = 'var callback = {};'.format(callback)
+            self.callback = f'var callback = {callback};'

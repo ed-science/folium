@@ -327,9 +327,7 @@ class Map(MacroElement):
         """Displays the PNG Map in a Jupyter notebook."""
         # The notebook calls all _repr_*_ by default.
         # We don't want that here b/c this one is quite slow.
-        if not self.png_enabled:
-            return None
-        return self._to_png()
+        return self._to_png() if self.png_enabled else None
 
     def render(self, **kwargs):
         """Renders the HTML representation of the element."""

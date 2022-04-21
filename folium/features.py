@@ -262,13 +262,10 @@ class VegaLite(Element):
 
         if vegalite_major_version == '1':
             self._embed_vegalite_v1(figure)
-        elif vegalite_major_version == '2':
+        elif vegalite_major_version == '2' or vegalite_major_version != '3':
             self._embed_vegalite_v2(figure)
-        elif vegalite_major_version == '3':
-            self._embed_vegalite_v3(figure)
         else:
-            # Version 2 is assumed as the default, if no version is given in the schema.
-            self._embed_vegalite_v2(figure)
+            self._embed_vegalite_v3(figure)
 
     def _get_vegalite_major_versions(self, spec):
         try:
@@ -516,9 +513,9 @@ class GeoJson(Layer):
         """
         test_feature = self.data['features'][0]
         if not callable(func) or not isinstance(func(test_feature), dict):
-            raise ValueError('{} should be a function that accepts items from '
-                             'data[\'features\'] and returns a dictionary.'
-                             .format(name))
+            raise ValueError(
+                f"{name} should be a function that accepts items from data['features'] and returns a dictionary."
+            )
 
     def find_identifier(self):
         """Find a unique identifier for each feature, create it if needed.
@@ -531,18 +528,20 @@ class GeoJson(Layer):
         """
         feats = self.data['features']
         # Each feature has an 'id' field with a unique value.
-        unique_ids = set(feat.get('id', None) for feat in feats)
+        unique_ids = {feat.get('id', None) for feat in feats}
         if None not in unique_ids and len(unique_ids) == len(feats):
             return 'feature.id'
         # Each feature has a unique string or int property.
         if all(isinstance(feat.get('properties', None), dict) for feat in feats):
             for key in feats[0]['properties']:
-                unique_values = set(
-                    feat['properties'].get(key, None) for feat in feats
+                unique_values = {
+                    feat['properties'].get(key, None)
+                    for feat in feats
                     if isinstance(feat['properties'].get(key, None), (str, int))
-                )
+                }
+
                 if len(unique_values) == len(feats):
-                    return 'feature.properties.{}'.format(key)
+                    return f'feature.properties.{key}'
         # We add an 'id' field with a unique value to the data.
         if self.embed:
             for i, feature in enumerate(feats):
@@ -567,11 +566,11 @@ class GeoJson(Layer):
         if self.style or self.highlight:
             mapper = GeoJsonStyleMapper(self.data, self.feature_identifier,
                                         self)
-            if self.style:
-                self.style_map = mapper.get_style_map(self.style_function)
-            if self.highlight:
-                self.highlight_map = mapper.get_highlight_map(
-                    self.highlight_function)
+        if self.style:
+            self.style_map = mapper.get_style_map(self.style_function)
+        if self.highlight:
+            self.highlight_map = mapper.get_highlight_map(
+                self.highlight_function)
         super(GeoJson, self).render()
 
 
@@ -740,10 +739,7 @@ class TopoJson(Layer):
         """Applies self.style_function to each feature of self.data."""
 
         def recursive_get(data, keys):
-            if len(keys):
-                return recursive_get(data.get(keys[0]), keys[1:])
-            else:
-                return data
+            return recursive_get(data.get(keys[0]), keys[1:]) if len(keys) else data
 
         geometries = recursive_get(self.data, self.object_path.split('.'))['geometries']  # noqa
         for feature in geometries:
@@ -921,8 +917,10 @@ class GeoJsonTooltip(Tooltip):
                             'than a GeoJson or TopoJson object.')
         keys = tuple(x for x in keys if x not in ('style', 'highlight'))
         for value in self.fields:
-            assert value in keys, ('The field {} is not available in the data. '
-                                   'Choose from: {}.'.format(value, keys))
+            assert (
+                value in keys
+            ), f'The field {value} is not available in the data. Choose from: {keys}.'
+
         super(GeoJsonTooltip, self).render(**kwargs)
 
 
@@ -1378,7 +1376,7 @@ class ColorLine(FeatureGroup):
                                 ).to_step(nb_steps)
         elif isinstance(colormap, LinearColormap):
             cm = colormap.to_step(nb_steps)
-        elif isinstance(colormap, list) or isinstance(colormap, tuple):
+        elif isinstance(colormap, (list, tuple)):
             cm = LinearColormap(colormap,
                                 vmin=min(colors),
                                 vmax=max(colors),
